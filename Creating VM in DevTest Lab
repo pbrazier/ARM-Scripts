@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newVMName": {
+      "type": "string",
+      "defaultValue": "TST-LAB01-EUW-VM-LIN01"
+    },
+    "labName": {
+      "type": "string",
+      "defaultValue": "TST-LAB01-EUW-DEV-01"
+    },
+    "size": {
+      "type": "string",
+      "defaultValue": "Basic_A1"
+    },
+    "userName": {
+      "type": "string",
+      "defaultValue": "paul"
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "[[[paul]]"
+    }
+  },
+  "variables": {
+    "labSubnetName": "TST-LAB01-EUW-SUB-01",
+    "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+    "labVirtualNetworkName": "TST-LAB01-EUW-NET-01",
+    "vmId": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+    "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-05-15",
+      "type": "Microsoft.DevTestLab/labs/virtualmachines",
+      "name": "[variables('vmName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+        "notes": "CentOS-based 7.3",
+        "galleryImageReference": {
+          "offer": "CentOS",
+          "publisher": "OpenLogic",
+          "sku": "7.3",
+          "osType": "Linux",
+          "version": "latest"
+        },
+        "size": "[parameters('size')]",
+        "userName": "[parameters('userName')]",
+        "password": "[parameters('password')]",
+        "isAuthenticationWithSshKey": false,
+        "labSubnetName": "[variables('labSubnetName')]",
+        "disallowPublicIpAddress": true,
+        "storageType": "Standard",
+        "allowClaim": false,
+        "networkInterface": {
+          "sharedPublicIpAddressConfiguration": {
+            "inboundNatRules": [
+              {
+                "transportProtocol": "tcp",
+                "backendPort": 22
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "labVMId": {
+      "type": "string",
+      "value": "[variables('vmId')]"
+    }
+  }
+}
