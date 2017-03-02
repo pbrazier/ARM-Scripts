@@ -51,19 +51,9 @@
         "password": "[parameters('password')]",
         "isAuthenticationWithSshKey": false,
         "labSubnetName": "[variables('labSubnetName')]",
-        "disallowPublicIpAddress": true,
+        "disallowPublicIpAddress": false,
         "storageType": "Standard",
-        "allowClaim": false,
-        "networkInterface": {
-          "sharedPublicIpAddressConfiguration": {
-            "inboundNatRules": [
-              {
-                "transportProtocol": "tcp",
-                "backendPort": 22
-              }
-            ]
-          }
-        }
+        "allowClaim": false
       }
     }
   ],
